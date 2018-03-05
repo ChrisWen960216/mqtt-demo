@@ -8,5 +8,10 @@ client.on('connect', () => {
 });
 
 client.on('message', (topic, message) => {
-  console.log(topic, message.toString());
+  const str = new Promise((resolve, reject) => resolve(message.toString()));
+  async function printData() {
+    console.log(await str);
+  }
+  printData();
 });
+
