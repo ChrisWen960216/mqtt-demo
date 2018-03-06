@@ -2,8 +2,8 @@ const express = require('express');
 
 const router = express.Router();
 
-const TemperatureController = require('../controller/temperature');
+const tempController = require('../controller/temp');
 /* GET home page. */
-router.get('/temp', TemperatureController.getData);
+router.get('/temp/:deviceId', tempController);
 
 module.exports = router;
