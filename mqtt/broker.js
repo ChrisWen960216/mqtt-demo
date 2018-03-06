@@ -8,6 +8,6 @@ const settings = {
 
 const server = new mosca.Server(settings);
 
-server.on('published', (packet, client) => {
+server.on('published', (packet) => {
   console.log('Published', packet.payload.toString());
 });
