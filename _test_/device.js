@@ -9,9 +9,7 @@ function main() {
   const args = process.argv.splice(2);
   const deviceId = args[0];
   if (!deviceId) {
-    console.log(`
-    用法: node device {deviceId}
-    `);
+    console.log('用法: node device {deviceId}');
     return 1;
   }
 

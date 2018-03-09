@@ -18,10 +18,10 @@ class TemperatureService {
     return new Promise((resolve) => {
       setTimeout(() => {
         client.unsubscribe(`/res/device/${token}`);
-        // client.end();
+        // client.removeListener('message',)
         resolve({ type: 'TIME_OUT' });
       }, 15000);
-      client.on('message', (topic, message) => {
+      client.once('message', (topic, message) => {
         const data = message.toString();
         client.unsubscribe(`/res/device/${token}`);
         // client.end();
