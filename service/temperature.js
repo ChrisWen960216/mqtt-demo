@@ -1,5 +1,3 @@
-// import { resolve } from 'url';
-
 // const mqtt = require('mqtt');
 const client = require('../global');
 const getHashToken = require('../common/token');
@@ -10,51 +8,32 @@ class TemperatureService {
   }
 
   getData() {
-    const deviceId = this.param;
-    const token = getHashToken();
-    client.subscribe(`/res/device/${token}`);
-    client.publish(`/req/device/${deviceId}`, token);
-
     return new Promise((resolve) => {
+      const deviceId = this.param;
+      const token = getHashToken();
+      client.subscribe(`/res/device/${token}`);
+      client.publish(`/req/device/${deviceId}`, token);
+
+      function handleMsg(topic, message) {
+        if (topic.toString() === `/res/device/${token}`) {
+          const data = message.toString();
+          client.unsubscribe(`/res/device/${token}`);
+          client.removeListener('message', handleMsg);
+          return resolve({ type: 'OPS_SUCCESS', data });
+        }
+      }
+
+      client.once('message', handleMsg);
+
+      // 定时器
       setTimeout(() => {
         client.unsubscribe(`/res/device/${token}`);
-        // client.removeListener('message',)
-        resolve({ type: 'TIME_OUT' });
-      }, 15000);
-      client.once('message', (topic, message) => {
-        const data = message.toString();
-        client.unsubscribe(`/res/device/${token}`);
-        // client.end();
-        return resolve({ type: 'OPS_SUCCESS', data });
-      });
+        client.removeListener('message', handleMsg);
+        return resolve({ type: 'TIME_OUT' });
+      }, 1000);
     });
   }
 }
-
-// function getData(param) {
-//   const deviceId = param;
-//   const token = getHashToken();
-//   client.subscribe(`/res/device/${token}`);
-//   client.publish(`/req/device/${deviceId}`, token);
-
-//   return new Promise((resolve) => {
-//     setTimeout(() => {
-//       client.unsubscribe(`/res/device/${token}`);
-//       // client.end();
-//       resolve({ type: 'TIME_OUT' });
-//     }, 15000);
-
-//     client.once('message', (topic, message) => {
-//       let data = '';
-//       if (topic.toString() === `/res/device/${token}`) {
-//         data = message.toString();
-//       }
-//       client.unsubscribe(`/res/device/${token}`);
-//       // client.end();
-//       return resolve({ type: 'OPS_SUCCESS', data });
-//     });
-//   });
-// }
 
 
 module.exports = TemperatureService;

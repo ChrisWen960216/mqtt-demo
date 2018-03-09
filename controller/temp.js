@@ -14,7 +14,7 @@ class TempController {
     const { request, response } = this;
     const params = new RequestFilter(request).getParams();
     const tempData = await new TemperatureService(params).getData();
-    // console.log(tempData);
+    console.log('tempData', tempData);
     let resData = {};
     switch (tempData.type) {
     // let resDaata = {};
